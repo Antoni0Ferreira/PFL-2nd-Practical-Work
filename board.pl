@@ -62,7 +62,7 @@ display_board_matrix([Head|Tail],N) :-
     nl,
     display_board_matrix(Tail, N1).
 
-display_board(X) :-
+display_game(X) :-
     nl,
     write('   ABCDEFGHIJKLMNOPQ'),
     nl,
