@@ -10,12 +10,12 @@ piece(1,9,9).
 piece(1,11,9).
 piece(1,13,9).
 piece(1,6,8).
-piece(1,8,9).
+piece(1,8,8).
 piece(1,10,8).
 piece(1,12,8).
 piece(1,7,7).
 piece(1,9,7).
-piece(1,11,7). 
+piece(1,11,7).
 
 piece(2,5,1).
 piece(2,7,1).
@@ -42,77 +42,53 @@ get_direction(Dir) :-
     repeat,
     write('\nIn which direction do you want to move?\n'),
     write('l - Left // r - Right\n'),
-    get_char(Dir),
+    get_char(Dir),skip_line,
     valid_direction(Dir).
 
-check_existence([Head|Tail],Player,X,Y) :-
+check_existence([XInput,YInput],Player,X,Y) :-
 
-    char_code(X_letter,Head),
-    translate_letter(X_letter,X),
-
-    last_element(Tail,Y_ascii),
-    Y is Y_ascii - 48,
+    char_code(XLetter,XInput),
+    translate_letter(XLetter,X),
+    Y is YInput - 48,
 
     write(X),
     write('//'),
     write(Y),nl,
     findall(Player,piece(Player,X,Y),[_|_]).
 
-check_Y([Head|Tail]) :-
-    Head >= 49,
-    Head =< 57,
-    length(Tail,N),
-    N == 0.
+check_cords([XInput,YInput],Player,X,Y) :-
+    XInput >= 65,
+    XInput =< 81,
+    YInput >= 49,
+    YInput =< 57,
+    write('\ndentro do check_cords!\n'),
+    check_existence([XInput,YInput],Player,X,Y).
 
-check_cords([Head|Tail],Player,X,Y) :-
-    Head >= 65,
-    Head =< 81,
-    check_Y(Tail),
-    check_existence([Head|Tail],Player,X,Y).
-
-check_valid_space(Board,1,[X,Y],'l',[X1,Y1]) :-
+check_valid_space(Board,1,[X,Y]) :-
     write('\ndentro do check_valid_space\n'),
-    X1 is X - 1,
-    X1 >= 0,
-    X1 =< 18,
-    Y1 is Y - 1,
-    Y1 >= 1,
-    Y1 =< 9,
-    get_board_value(Board,Y1,X1,Value),
+    write([X,Y]),nl,
+    get_board_value(Board,Y,X,Value),
     valid_spaces('+',Value).
 
-check_valid_space(Board,1,[X,Y],'r',[X1,Y1]) :-
+check_valid_space(Board,2,[X,Y]) :-
     write('\ndentro do check_valid_space\n'),
-    X1 is X + 1,
-    X1 >= 0,
-    X1 =< 18,
-    Y1 is Y - 1,
-    Y1 >= 1,
-    Y1 =< 9,
-    get_board_value(Board,Y1,X1,Value),
-    valid_spaces('+',Value).
-
-check_valid_space(Board,2,[X,Y],'l',[X1,Y1]) :-
-    write('\ndentro do check_valid_space\n'),
-    X1 is X - 1,
-    X1 >= 0,
-    X1 =< 18,
-    Y1 is Y + 1,
-    Y1 >= 1,
-    Y1 =< 9,
-    get_board_value(Board,Y1,X1,Value),
+    write([X,Y]),nl,
+    get_board_value(Board,Y,X,Value),
     valid_spaces('o',Value).
 
-check_valid_space(Board,2,[X,Y],'r',[X1,Y1]) :-
-    write('\ndentro do check_valid_space\n'),
-    X1 is X + 1,
-    X1 >= 0,
-    X1 =< 18,
-    Y1 is Y + 1,
-    Y1 >= 1,
-    Y1 =< 9,
-    get_board_value(Board,Y1,X1,Value),
-    valid_spaces('o',Value).
+check_attack(1,[X,Y]) :-
+    piece(2,X,Y),
+    retract(piece(2,X,Y)).
+
+check_attack(1,[X,Y]) :-
+    \+piece(2,X,Y).
+
+check_attack(2,[X,Y]) :-
+    piece(1,X,Y),
+    retract(piece(1,X,Y)).
+
+check_attack(2,[X,Y]) :-
+    \+piece(1,X,Y).
 
 move_piece(Board,1,[X,Y],NewBoard) :-
     write('\ndentro do move_piece\n'),
@@ -131,3 +107,83 @@ clean_space(Board,Player,[X,Y],NewBoard) :-
     format('X- ~d // Y- ~d\n',[X,Y]),
     replace_board_value(Board,Y,X,'_',NewBoard),
     retract(piece(Player,X,Y)).
+
+get_new_space(1,[X,Y],'l',[X1,Y1]) :-
+    write('\ndentro do get_new_space\n'),
+    X1 is X - 1,
+    X1 >= 0,
+    X1 =< 18,
+    Y1 is Y - 1,
+    Y1 >= 1,
+    Y1 =< 9.
+
+get_new_space(1,[X,Y],'r',[X1,Y1]) :-
+    write('\ndentro do get_new_space\n'),
+    X1 is X + 1,
+    X1 >= 0,
+    X1 =< 18,
+    Y1 is Y - 1,
+    Y1 >= 1,
+    Y1 =< 9.
+
+get_new_space(2,[X,Y],'l',[X1,Y1]) :-
+    write('\ndentro do get_new_space\n'),
+    X1 is X - 1,
+    X1 >= 0,
+    X1 =< 18,
+    Y1 is Y + 1,
+    Y1 >= 1,
+    Y1 =< 9.
+
+get_new_space(2,[X,Y],'r',[X1,Y1]) :-
+    write('\ndentro do get_new_space\n'),
+    X1 is X + 1,
+    X1 >= 0,
+    X1 =< 18,
+    Y1 is Y + 1,
+    Y1 >= 1,
+    Y1 =< 9.
+
+check_reached_other_side(Player) :-
+    \+isEven(Player),
+    findall(Player,piece(Player,_,1),[_|_]).
+
+check_reached_other_side(Player) :-
+    isEven(Player),
+    findall(Player,piece(Player,_,9),[_|_]).
+
+check_other_player_number_pieces(Player) :-
+    \+isEven(Player),
+    OtherPlayer is Player + 1,
+    \+findall(OtherPlayer,piece(OtherPlayer,_,_),[_|_]).
+
+check_other_player_number_pieces(Player) :-
+    isEven(Player),
+    OtherPlayer is Player - 1,
+    \+findall(OtherPlayer,piece(OtherPlayer,_,_),[_|_]).
+
+get_number_plays(Player,N) :-
+    findall(_,piece(Player,_,_),List),
+    length(List,N1),
+    N1 >= 3,
+    N is 3.
+
+get_number_plays(Player,N) :-
+    findall(_,piece(Player,_,_),List),
+    length(List,N1),
+    N1 = 2,
+    N is 2.
+
+get_number_plays(Player,N) :-
+    findall(_,piece(Player,_,_),List),
+    length(List,N1),
+    N1 = 1,
+    N is 1.
+
+check_victory(Player) :-
+    check_reached_other_side(Player),
+    write('ueee').
+
+check_victory(Player) :-
+    check_other_player_number_pieces(Player),
+    write('ueee!!!').

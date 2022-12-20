@@ -78,5 +78,6 @@ display_game(X) :-
    %  write('B '),write('   |_|_|_|_|_|_|   '), write(' 7'),nl,
    %  write('A '),write('    |_|_|_|_|_|    '), write(' 6'),
     nl,
+    write('   ABCDEFGHIJKLMNOPQ'),
     nl,nl.
 
