@@ -38,6 +38,19 @@ valid_spaces('+','o').
 valid_direction('r').
 valid_direction('l').
 
+list_pieces(_,_) :-
+    assert(pieces([])),
+    fail. %passar ao próximo passo
+
+list_pieces(Player,_) :-
+    piece(Player,X,Y),
+    retract(pieces(L)),
+    assert(pieces([piece(Player,X,Y)|L])),
+    fail.
+
+list_pieces(_,L) :-
+    retract(pieces(L)).
+
 get_direction(Dir) :-
     repeat,
     write('\nIn which direction do you want to move?\n'),
@@ -51,9 +64,9 @@ check_existence([XInput,YInput],Player,X,Y) :-
     translate_letter(XLetter,X),
     Y is YInput - 48,
 
-    write(X),
-    write('//'),
-    write(Y),nl,
+    % write(X),
+    % write('//'),
+    % write(Y),nl,
     findall(Player,piece(Player,X,Y),[_|_]).
 
 check_cords([XInput,YInput],Player,X,Y) :-
@@ -61,18 +74,18 @@ check_cords([XInput,YInput],Player,X,Y) :-
     XInput =< 81,
     YInput >= 49,
     YInput =< 57,
-    write('\ndentro do check_cords!\n'),
+    % write('\ndentro do check_cords!\n'),
     check_existence([XInput,YInput],Player,X,Y).
 
 check_valid_space(Board,1,[X,Y]) :-
-    write('\ndentro do check_valid_space\n'),
-    write([X,Y]),nl,
+    % write('\ndentro do check_valid_space\n'),
+    format('\nPIECE - ~w\n',[[X,Y]]),
     get_board_value(Board,Y,X,Value),
     valid_spaces('+',Value).
 
 check_valid_space(Board,2,[X,Y]) :-
-    write('\ndentro do check_valid_space\n'),
-    write([X,Y]),nl,
+    % write('\ndentro do check_valid_space\n'),
+    format('\nPIECE - ~w\n',[[X,Y]]),
     get_board_value(Board,Y,X,Value),
     valid_spaces('o',Value).
 
@@ -91,25 +104,28 @@ check_attack(2,[X,Y]) :-
     \+piece(1,X,Y).
 
 move_piece(Board,1,[X,Y],NewBoard) :-
-    write('\ndentro do move_piece\n'),
-    format('X- ~d // Y- ~d\n',[X,Y]),
+    % write('\ndentro do move_piece\n'),
+    % format('X- ~d // Y- ~d\n',[X,Y]),
     replace_board_value(Board,Y,X,'+',NewBoard),
     assert(piece(1,X,Y)).
 
 move_piece(Board,2,[X,Y],NewBoard) :-
-    write('\ndentro do move_piece\n'),
-    format('X- ~d // Y- ~d\n',[X,Y]),
+    % write('\ndentro do move_piece\n'),
+    % format('X- ~d // Y- ~d\n',[X,Y]),
     replace_board_value(Board,Y,X,'o',NewBoard),
     assert(piece(2,X,Y)).
 
 clean_space(Board,Player,[X,Y],NewBoard) :-
-    write('\ndentro do clean_space\n'),
-    format('X- ~d // Y- ~d\n',[X,Y]),
+    % write('\ndentro do clean_space\n'),
+    % format('X- ~d // Y- ~d\n',[X,Y]),
     replace_board_value(Board,Y,X,'_',NewBoard),
     retract(piece(Player,X,Y)).
 
+prepare_space(Board,[X,Y],NewBoard) :-
+    replace_board_value(Board,Y,X,'_',NewBoard).
+
 get_new_space(1,[X,Y],'l',[X1,Y1]) :-
-    write('\ndentro do get_new_space\n'),
+    % write('\ndentro do get_new_space\n'),
     X1 is X - 1,
     X1 >= 0,
     X1 =< 18,
@@ -118,7 +134,7 @@ get_new_space(1,[X,Y],'l',[X1,Y1]) :-
     Y1 =< 9.
 
 get_new_space(1,[X,Y],'r',[X1,Y1]) :-
-    write('\ndentro do get_new_space\n'),
+    % write('\ndentro do get_new_space\n'),
     X1 is X + 1,
     X1 >= 0,
     X1 =< 18,
@@ -127,7 +143,7 @@ get_new_space(1,[X,Y],'r',[X1,Y1]) :-
     Y1 =< 9.
 
 get_new_space(2,[X,Y],'l',[X1,Y1]) :-
-    write('\ndentro do get_new_space\n'),
+    % write('\ndentro do get_new_space\n'),
     X1 is X - 1,
     X1 >= 0,
     X1 =< 18,
@@ -136,7 +152,7 @@ get_new_space(2,[X,Y],'l',[X1,Y1]) :-
     Y1 =< 9.
 
 get_new_space(2,[X,Y],'r',[X1,Y1]) :-
-    write('\ndentro do get_new_space\n'),
+    % write('\ndentro do get_new_space\n'),
     X1 is X + 1,
     X1 >= 0,
     X1 =< 18,
@@ -180,10 +196,19 @@ get_number_plays(Player,N) :-
     N1 = 1,
     N is 1.
 
-check_victory(Player) :-
-    check_reached_other_side(Player),
-    write('ueee').
+choose_pieces_rec(Gamestate,Player,Pieces,ChosenPieces,N) :-
+    N > 0,
+    format('\n#~d Which piece do you want to move forward? ([A,Q][1,9])\n',[4-N]),read(Cords),
+    check_cords(Cords,Player,X,Y),
+    write('\ndepois do check_cords\n'),
+    N1 is N - 1,
 
-check_victory(Player) :-
+    choose_pieces_rec(Gamestate,Player,[[X,Y]|Pieces],ChosenPieces,N1).
+
+choose_pieces_rec(_,_,Pieces,Pieces,0).
+
+game_over(Player) :-
+    check_reached_other_side(Player),
+
+game_over(Player) :-
     check_other_player_number_pieces(Player),
-    write('ueee!!!').

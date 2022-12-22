@@ -1,5 +1,5 @@
 translate_symbol(player_1,Symbol) :- Symbol = '+'.
-translate_symbol(player_2,Symbol) :- Symbol = 'º'.
+translate_symbol(player_2,Symbol) :- Symbol = 'o'.
 
 translate_number(0,Num) :- Num=' '.
 translate_number(1,Num) :- Num='1'.
