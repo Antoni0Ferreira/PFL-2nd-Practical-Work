@@ -80,3 +80,31 @@ clear_console :-
         Delta is T2 - T1,
         Delta >= 500,
     !.
+
+%/----------------------------------------/
+
+piece_to_pair(piece(_, X, Y), [X, Y]).
+
+quicksort_pieces([], []).
+quicksort_pieces([Head|Tail], Sorted) :-
+    split_pieces(Head, Tail, Smaller, Larger),
+    quicksort_pieces(Smaller, SortedSmaller),
+    quicksort_pieces(Larger, SortedLarger),
+    append(SortedSmaller, [Head|SortedLarger], Sorted).
+
+split_pieces(_, [], [], []).
+split_pieces(Pivot, [Head|Tail], [Head|Smaller], Larger) :-
+    piece_to_pair(Head, Pair),
+    piece_to_pair(Pivot, PivotPair),
+    Pair = [_, Y],
+    PivotPair = [_, PivotY],
+    Y < PivotY,
+    split_pieces(Pivot, Tail, Smaller, Larger).
+
+split_pieces(Pivot, [Head|Tail], Smaller, [Head|Larger]) :-
+    piece_to_pair(Head, Pair),
+    piece_to_pair(Pivot, PivotPair),
+    Pair = [_, Y],
+    PivotPair = [_, PivotY],
+    Y >= PivotY,
+    split_pieces(Pivot, Tail, Smaller, Larger).
