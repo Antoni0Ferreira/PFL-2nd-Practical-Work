@@ -12,30 +12,41 @@ valid_play_menu_choice(4).
 display_rules :-
     write('\nTaacoca is a two-player strategy game played on a grid. Each player takes turns placing their pieces on the grid, trying to get three in a row horizontally, vertically, or diagonally. The first player to get three in a row wins the game.'), nl.
 
+%/----------------------------------------/
+
 start_pvp :-
     write('\nStarting player vs. player game...\n'),
     clear_console,
     game_pvp,!.
 
+%/----------------------------------------/
+
 start_pvai(Level) :-
     write('\nStarting player vs. AI game...\n'),
-    clear_console,
+    clear_console,skip_line,
     game_pvai(Level),!.
+
+%/----------------------------------------/
 
 start_aivai(Level) :-
     write('\nStarting AI vs. AI game...\n'),
     clear_console,
     game_aivai(Level),!.
 
+%/----------------------------------------/
+
 menu_choice(1) :-
-    play_menu,skip_line.
+    play_menu.
 
 menu_choice(2) :-
     display_rules,
     fail.
 
 menu_choice(3) :-
-    write('\nGoodbye!\n').
+    write('\nGoodbye!\n'),
+    write('\n=========================================================\n').
+
+%/----------------------------------------/
 
 play_menu_choice(1) :-
     start_pvp.
@@ -54,8 +65,11 @@ play_menu_choice(3) :-
     char_to_int(LevelChar,Level),
     start_aivai(Level).
 
+%/----------------------------------------/
+
 play :-
     repeat,
+    write('\n=========================================================\n'),
     write('\nWelcome to Taacoca!\n'),
     write('\n1. Play\n'),
     write('2. Rules\n'),
@@ -67,6 +81,7 @@ play :-
     valid_menu_choice(Choice),
     menu_choice(Choice).
 
+%/----------------------------------------/
 
 play_menu :-
     repeat,

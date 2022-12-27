@@ -55,18 +55,27 @@ list_pieces(_,L) :-
 
 %/----------------------------------------/
 
-list_next_pieces(_) :-
-    assert(next_pieces([])),
-    fail.
+% list_next_pieces(_,_,_,_) :-
+%     assert(next_pieces([])),
+%     fail.
 
-list_next_pieces(_) :-
-    next_piece(X,Y,Weight),
-    retract(next_pieces(L)),
-    assert(next_pieces([next_piece(X,Y,Weight)|L])),
-    fail.
+% list_next_pieces([X1,Y1],[X2,Y2],_,_) :-
+%     next_piece(X1,Y1,Weight1),
+%     format('\n#1 - ~w\n',[next_piece(X1,Y1,Weight1)]),
+%     next_piece(X2,Y2,Weight2),
+%     format('\n#2 - ~w\n',[next_piece(X2,Y2,Weight2)]),
+%     retract(next_pieces(L)),
+%     assert(next_pieces([(next_piece(X1,Y1,Weight1)),(next_piece(X2,Y2,Weight2))|L])),
+%     fail.
 
-list_next_pieces(L) :-
-    retract(next_pieces(L)).
+% list_next_pieces(_,_,L,L1) :-
+%     sort(L,L1),
+%     retract(next_pieces(L)).
+
+% list_next([X1,Y1],[X2,Y2],[next_piece(X1,Y1,Weight1),next_piece(X2,Y2,Weight2)]).
+
+% get_next_weight([X,Y,Weight]) :-
+%     next_piece(X,Y,Weight).
 
 %/----------------------------------------/
 
@@ -104,13 +113,13 @@ check_cords([XInput,YInput],Player,X,Y) :-
 
 check_valid_space(Board,1,[X,Y]) :-
     % write('\ndentro do check_valid_space\n'),
-    format('\nPIECE - ~w\n',[[X,Y]]),
+    % format('\nPIECE - ~w\n',[[X,Y]]),
     get_board_value(Board,Y,X,Value),
     valid_spaces('+',Value).
 
 check_valid_space(Board,2,[X,Y]) :-
     % write('\ndentro do check_valid_space\n'),
-    format('\nPIECE - ~w\n',[[X,Y]]),
+    % format('\nPIECE - ~w\n',[[X,Y]]),
     get_board_value(Board,Y,X,Value),
     valid_spaces('o',Value).
 
@@ -239,16 +248,32 @@ get_number_plays(Player,N) :-
 
 choose_pieces_rec(Gamestate,Player,Pieces,ChosenPieces,N) :-
     N > 0,
-    format('\n#~d Which piece do you want to move forward? ([A,Q][1,9])\n',[4-N]),read(Cords),
+    format('\n#~d Which piece do you want to move forward? ([A-Q][1-9])\n',[4-N]),read(Cords),
     check_cords(Cords,Player,X,Y),
-    write('\ndepois do check_cords\n'),
+    % write('\ndepois do check_cords\n'),
     N1 is N - 1,
 
     choose_pieces_rec(Gamestate,Player,[[X,Y]|Pieces],ChosenPieces,N1).
 
 choose_pieces_rec(_,_,Pieces,Pieces,0).
 
+%/----------------------------------------/
 
+choose_left_pieces([],NewPieces,NewPieces).
+
+choose_left_pieces([[[X1,Y1]]|Tail],Acc,NewPieces) :-
+    choose_left_pieces(Tail,[[X1,Y1]|Acc],NewPieces).
+
+choose_left_pieces([[[X1,Y1],_]|Tail],Acc,NewPieces) :-
+    choose_left_pieces(Tail,[[X1,Y1]|Acc],NewPieces).
+
+choose_right_pieces([],NewPieces,NewPieces).
+
+choose_right_pieces([[[X2,Y2]]|Tail],Acc,NewPieces) :-
+    choose_right_pieces(Tail,[[X2,Y2]|Acc],NewPieces).
+
+choose_right_pieces([[_,[X2,Y2]]|Tail],Acc,NewPieces) :-
+    choose_right_pieces(Tail,[[X2,Y2]|Acc],NewPieces).
 
 %/----------------------------------------/
 
@@ -259,15 +284,3 @@ game_over(Player) :-
     check_other_player_number_pieces(Player).
 
 %/----------------------------------------/
-
-% find_closest_piece([X,Y], [[X2,Y2]|Tail], Distance,_, Closest) :-
-
-%     length([[X,Y]|Tail],Length),
-%     Length > 0,
-
-%     calculate_distance([X,Y], [X2,Y2], DistanceCalculated),
-
-%     \+DistanceCalculated < Distance,
-%     find_closest_piece([X,Y],Tail,Distance,Closest,Closest). 
-
-%     next_move(X,Y,Weight)

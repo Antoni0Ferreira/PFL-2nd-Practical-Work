@@ -1,20 +1,16 @@
 :- consult('game_logic.pl').
 :- consult('game_logic_computer.pl').
 
-%play game
-%play
-
-
 move(Gamestate,Player,NewGamestate) :-
     display_game(Gamestate),
-    write('---------------------------------------------------------'),
+
     format('\nPLAYER ~d -\n',[Player]),
 
     get_direction(Dir),
 
     get_number_plays(Player,N),
 
-    format('\nN- ~d\n',[N]),
+    % format('\nN- ~d\n',[N]),
 
     choose_pieces(Gamestate,Player,Dir,[],NewPieces,NewGamestate1,N),
 
@@ -27,14 +23,14 @@ move(Gamestate,Player,NewGamestate) :-
 
 choose_move(Gamestate,Player,1,NewGamestate) :-
     display_game(Gamestate),
-    write('---------------------------------------------------------'),
+
     format('\nCOMPUTER - PLAYER ~d -\n',[Player]),
 
     get_direction_computer(Dir),
-    format('\nDir - ~w\n',[Dir]),
+    % format('\nDir - ~w\n',[Dir]),
 
     get_number_plays(Player,N),
-    format('\nN - ~d\n',[N]),
+    % format('\nN - ~d\n',[N]),
 
     choose_pieces_computer(Gamestate,Player,Dir,[],NewPieces,NewGamestate1,N),
 
@@ -46,25 +42,26 @@ choose_move(Gamestate,Player,1,NewGamestate) :-
 
 choose_move(Gamestate,Player,2,NewGamestate) :-
     display_game(Gamestate),
-    write('---------------------------------------------------------'),
+
     format('\nCOMPUTER - PLAYER ~d -\n',[Player]),
 
     get_number_plays(Player,N),
-    format('\nN - ~d\n',[N]),
+    % format('\nN - ~d\n',[N]),
 
     choose_best_pieces(Player,ChosenPieces,N),
-    write('\nAfter choose_best_pieces\n'),
+    % write('\nAfter choose_best_pieces\n'),
 
     get_valid_moves(Gamestate,Player,ChosenPieces,[],NewPieces,N),
-    write('\nAfter get_valid_moves\n'),
-    format('\nNEW PIECES - ~w\n',[NewPieces]),
+    % write('\nAfter get_valid_moves\n'),
+    % format('\nNEW PIECES - ~w\n',[NewPieces]),
     
-    find_next_pieces(NewPieces,[],BestPieces,N),
-    write('\nAfter find_next_pieces\n'),
-    format('\nBEST PIECES - ~w\n',[BestPieces]),
+    find_next_pieces(NewPieces,BestPieces),
+    % write('\nAfter find_next_pieces\n'),
+    % format('\nBEST PIECES - ~w\n',[BestPieces]),
 
     clean_game(Gamestate,Player,ChosenPieces,NewGamestate1,N),
     move_pieces(NewGamestate1,Player,BestPieces,NewGamestate,N),
+    check_attacks(Player,BestPieces,N),
 
     write('---------------------------------------------------------'),!.
 
@@ -73,7 +70,7 @@ choose_move(Gamestate,Player,2,NewGamestate) :-
 check_valid_spaces(Gamestate,Player,[Head|Tail],N) :-
 
     N > 0,
-    format('\nList - ~w\n',[[Head|Tail]]),
+    % format('\nList - ~w\n',[[Head|Tail]]),
     check_valid_space(Gamestate,Player,Head),
     N1 is N - 1,
     check_valid_spaces(Gamestate,Player,Tail,N1).
@@ -96,7 +93,7 @@ check_attacks(_,_,0).
 clean_game(Gamestate,Player,[[X,Y]|Tail],NewGamestate,N) :-
 
     N > 0,
-    format('\nCLEAN THESE SPACES - ~w\n',[[[X,Y]|Tail]]),
+    % format('\nCLEAN THESE SPACES - ~w\n',[[[X,Y]|Tail]]),
     clean_space(Gamestate,Player,[X,Y],NewGamestate1),
     N1 is N - 1,
     clean_game(NewGamestate1,Player,Tail,NewGamestate,N1).
@@ -120,10 +117,10 @@ move_pieces(Gamestate,Player,[[X,Y]|Tail],NewGamestate,N) :-
 
     N > 0,
     % write('\ndentro do move_pieces\n'),
-    write([[X,Y]|Tail]),
+    % write([[X,Y]|Tail]),
 
     move_piece(Gamestate,Player,[X,Y],NewGamestate1),
-    display_game(NewGamestate1),
+    % display_game(NewGamestate1),
     % write('\ndepois do move_piece\n'),
     N1 is N - 1,
     % format('N1 is ~d\n',[N1]),
@@ -137,10 +134,10 @@ choose_pieces(Gamestate,Player,Dir,Pieces,NewPieces,NewGamestate,N) :-
     repeat,
     choose_pieces_rec(Gamestate,Player,Pieces,ChosenPieces,N),
     \+has_repeated_elements(ChosenPieces),
-    format('\nPIECES INICIAL: ~w\n',[ChosenPieces]),
+    % format('\nPIECES INICIAL: ~w\n',[ChosenPieces]),
 
     get_new_spaces(Player,ChosenPieces,Dir,[],NewPieces,N),
-    format('\nNEW PIECES: ~w\n',[NewPieces]),
+    % format('\nNEW PIECES: ~w\n',[NewPieces]),
 
     prepare_move(Gamestate,ChosenPieces,NewGamestate1,N),
     check_valid_spaces(NewGamestate1,Player,NewPieces,N),
@@ -150,10 +147,10 @@ choose_pieces_computer(Gamestate,Player,Dir,Pieces,NewPieces,NewGamestate,N) :-
     repeat,
     choose_pieces_computer_rec(Gamestate,Player,Pieces,ChosenPieces,N),
     \+has_repeated_elements(ChosenPieces),
-    format('\nPIECES INICIAL: ~w\n',[ChosenPieces]),
+    % format('\nPIECES INICIAL: ~w\n',[ChosenPieces]),
 
     get_new_spaces(Player,ChosenPieces,Dir,[],NewPieces,N),
-    format('\nNEW PIECES: ~w\n',[NewPieces]),
+    % format('\nNEW PIECES: ~w\n',[NewPieces]),
 
     prepare_move(Gamestate,ChosenPieces,NewGamestate1,N),
     check_valid_spaces(NewGamestate1,Player,NewPieces,N),
@@ -175,27 +172,49 @@ get_new_spaces(_,[],_,Pieces,Pieces,0).
 get_valid_moves(Gamestate,Player,[[X,Y]|Tail],Acc,AllValidMoves,N) :-
 
     N > 0,
-    write('\nEstou dentro do get_valid_moves!\n'),
-    format('Lista - ~w',[[[X,Y]|Tail]]),
+    % write('\nEstou dentro do get_valid_moves!\n'),
+    % format('Lista - ~w',[[[X,Y]|Tail]]),
     valid_moves(Gamestate,Player,[X,Y],ValidMoves),
     N1 is N - 1,
     get_valid_moves(Gamestate,Player,Tail,[ValidMoves|Acc],AllValidMoves,N1).
+    % listing(next_piece).
 
 get_valid_moves(_,_,[],ValidMoves,ValidMoves,0).
 
 %/----------------------------------------/
 
-find_next_pieces([Head|Tail],Acc,NewPieces,N) :-
+find_next_pieces([Head|Tail],NewPieces) :-
 
-    N > 0,
-    write('\nEstou dentro do find_next_pieces!\n'),
-    format('\nHEAD - ~w\n',[Head]),
-    find_next_piece(Head,NewPiece),
-    format('\nNewPiece - ~w\n',[NewPiece]),
-    N1 is N - 1,
-    find_next_pieces(Tail,[NewPiece|Acc],NewPieces,N1).
+    % write('\nEstou dentro do find_next_pieces!\n'),
+    % format('\nHEAD - ~w\n',[Head]),
+    find_direction([Head|Tail],0,0,Left,Right),
+    % format('\nLEFT - ~d\n',[Left]),
+    % format('\nRIGHT - ~d\n',[Right]),
+    Left >= Right,
+    choose_left_pieces([Head|Tail],[],NewPieces),
+    retractall(next_piece(_,_,_)).
+    % find_next_piece(Head,NewPiece),
+    % format('\nNewPiece - ~w\n',[NewPiece]),
+    % N1 is N - 1,
+    % find_next_pieces(Tail,[NewPiece|Acc],NewPieces,N1).
 
-find_next_pieces(_,NewPieces,NewPieces,0).
+find_next_pieces([Head|Tail],NewPieces) :-
+
+    % write('\nEstou dentro do find_next_pieces!\n'),
+    % format('\nHEAD - ~w\n',[Head]),
+    find_direction([Head|Tail],0,0,Left,Right),
+    % format('\nLEFT - ~d\n',[Left]),
+    % format('\nRIGHT - ~d\n',[Right]),
+    Left < Right,
+    choose_right_pieces([Head|Tail],[],NewPieces),
+    retractall(next_piece(_,_,_)).
+    % find_next_piece(Head,NewPiece),
+    % format('\nNewPiece - ~w\n',[NewPiece]),
+    % N1 is N - 1,
+    % find_next_pieces(Tail,[NewPiece|Acc],NewPieces,N1).
+
+% find_next_pieces(_,NewPieces,NewPieces,0) :-
+%     retractall(next_piece(_,_,_)).
 
 %/----------------------------------------/
 
@@ -208,7 +227,8 @@ game(Gamestate,N,FinalGamestate) :-
     isEven(N),
     \+game_over(2),
     move(Gamestate,2,NewGamestate),
-    N1 is N + 1,nl,listing(piece),nl,
+    N1 is N + 1,
+    % nl,listing(piece),nl,
     game(NewGamestate,N1,FinalGamestate).    
 
 game(FinalGamestate,N,FinalGamestate) :-
@@ -220,34 +240,37 @@ game(Gamestate,N,FinalGamestate) :-
     \+isEven(N),
     \+game_over(1),
     move(Gamestate,1,NewGamestate),
-    N1 is N + 1,nl,listing(piece),nl,
+    N1 is N + 1,
+    % nl,listing(piece),nl,
     game(NewGamestate,N1,FinalGamestate).
 
 %/----------------------------------------/
 
 game_one_computer(Gamestate,Level,FinalGamestate) :-
     \+game_over(1),
-    move(Gamestate,1,NewGamestate),
     \+game_over(2),
-    choose_move(NewGamestate,2,Level,NewGamestate1),nl,listing(piece),nl,
+    move(Gamestate,1,NewGamestate),
+    % nl,listing(piece),nl,
+    choose_move(NewGamestate,2,Level,NewGamestate1),
+    % nl,listing(piece),nl,
     game_one_computer(NewGamestate1,Level,FinalGamestate).
 
 game_one_computer(FinalGamestate,_,FinalGamestate) :-
     game_over(1),
     write('\nCongrats, you won!\n').
 
-game_one_computer(Gamestate,_,FinalGamestate) :-
+game_one_computer(FinalGamestate,_,FinalGamestate) :-
     \+game_over(1),
-    move(Gamestate,1,FinalGamestate),
     game_over(2),
+    % move(Gamestate,1,FinalGamestate),
     write('\nSorry, you lost :(\n').
 
 %/----------------------------------------/
 
 game_two_computers(Gamestate,Level,FinalGamestate) :-
     \+game_over(1),
-    choose_move(Gamestate,1,Level,NewGamestate),
     \+game_over(2),
+    choose_move(Gamestate,1,Level,NewGamestate),
     choose_move(NewGamestate,2,Level,NewGamestate1),
     game_two_computers(NewGamestate1,Level,FinalGamestate).
 
@@ -255,26 +278,32 @@ game_two_computers(FinalGamestate,_,FinalGamestate) :-
     game_over(1),
     write('\nCongrats, Computer #1 won!\n').
 
-game_two_computers(Gamestate,Level,FinalGamestate) :-
+game_two_computers(FinalGamestate,_,FinalGamestate) :-
     \+game_over(1),
-    choose_move(Gamestate,1,Level,FinalGamestate),
     game_over(2),
+    % choose_move(Gamestate,1,Level,FinalGamestate),
     write('\nCongrats, Computer #2 won!\n').
 
 %/----------------------------------------/
 
 %game modes - start game
 game_pvp :-
+    write('\n=========================================================\n'),
     empty_board(InitialGamestate),
     game(InitialGamestate,1,FinalGamestate),
-    display_game(FinalGamestate).
+    display_game(FinalGamestate),
+    write('\n=========================================================\n').
 
 game_pvai(Level) :-
+    write('\n=========================================================\n'),
     empty_board(InitialGamestate),
     game_one_computer(InitialGamestate,Level,FinalGamestate),
-    display_game(FinalGamestate).
+    display_game(FinalGamestate),
+    write('\n=========================================================\n').
 
 game_aivai(Level) :-
+    write('\n=========================================================\n'),
     empty_board(InitialGamestate),
     game_two_computers(InitialGamestate, Level, FinalGamestate),
-    display_game(FinalGamestate).
+    display_game(FinalGamestate),
+    write('\n=========================================================\n').

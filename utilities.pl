@@ -21,8 +21,7 @@ isEven(X) :-
 
 %/----------------------------------------/
 
-get_board_value_row([Head|_],0,Value) :-
-    Value = Head.
+get_board_value_row([Value|_],0,Value).
 
 get_board_value_row([_|Tail],Column,Value) :-
     Column > 0,
@@ -85,26 +84,50 @@ clear_console :-
 
 piece_to_pair(piece(_, X, Y), [X, Y]).
 
-quicksort_pieces([], []).
-quicksort_pieces([Head|Tail], Sorted) :-
-    split_pieces(Head, Tail, Smaller, Larger),
-    quicksort_pieces(Smaller, SortedSmaller),
-    quicksort_pieces(Larger, SortedLarger),
-    append(SortedSmaller, [Head|SortedLarger], Sorted).
+%/----------------------------------------/
 
-split_pieces(_, [], [], []).
-split_pieces(Pivot, [Head|Tail], [Head|Smaller], Larger) :-
+quicksort_pieces(_,[], []).
+quicksort_pieces(1,[Head|Tail], Sorted) :-
+    split_pieces(1,Head, Tail, Smaller, Larger),
+    quicksort_pieces(1,Smaller, SortedSmaller),
+    quicksort_pieces(1,Larger, SortedLarger),
+    append(SortedSmaller, [Head|SortedLarger], Sorted).
+    
+quicksort_pieces(2,[Head|Tail], Sorted) :-
+    split_pieces(2,Head, Tail, Larger, Smaller),
+    quicksort_pieces(2,Larger, SortedLarger),
+    quicksort_pieces(2,Smaller, SortedSmaller),
+    append(SortedLarger, [Head|SortedSmaller], Sorted).
+
+split_pieces(_,_, [], [], []).
+split_pieces(1,Pivot, [Head|Tail], [Head|Smaller], Larger) :-
     piece_to_pair(Head, Pair),
     piece_to_pair(Pivot, PivotPair),
     Pair = [_, Y],
     PivotPair = [_, PivotY],
     Y < PivotY,
-    split_pieces(Pivot, Tail, Smaller, Larger).
+    split_pieces(1,Pivot, Tail, Smaller, Larger).
 
-split_pieces(Pivot, [Head|Tail], Smaller, [Head|Larger]) :-
+split_pieces(1,Pivot, [Head|Tail], Smaller, [Head|Larger]) :-
     piece_to_pair(Head, Pair),
     piece_to_pair(Pivot, PivotPair),
     Pair = [_, Y],
     PivotPair = [_, PivotY],
     Y >= PivotY,
-    split_pieces(Pivot, Tail, Smaller, Larger).
+    split_pieces(1,Pivot, Tail, Smaller, Larger).
+
+split_pieces(2,Pivot, [Head|Tail], [Head|Larger], Smaller) :-
+    piece_to_pair(Head, Pair),
+    piece_to_pair(Pivot, PivotPair),
+    Pair = [_, Y],
+    PivotPair = [_, PivotY],
+    Y > PivotY,
+    split_pieces(2,Pivot, Tail, Larger, Smaller).
+
+split_pieces(2,Pivot, [Head|Tail], Larger, [Head|Smaller]) :-
+    piece_to_pair(Head, Pair),
+    piece_to_pair(Pivot, PivotPair),
+    Pair = [_, Y],
+    PivotPair = [_, PivotY],
+    Y =< PivotY,
+    split_pieces(2,Pivot, Tail, Larger, Smaller).
