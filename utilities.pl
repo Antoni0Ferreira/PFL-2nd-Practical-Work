@@ -1,14 +1,10 @@
 :- use_module(library(lists)).
 :- use_module(library(random)).
 
-last_element([Head],Head).
-last_element([_|Tail],X) :-
-    last_element(Tail,X).
-
-first_element([Head|_],Head).
-
 %/----------------------------------------/
 
+% Predicate that checks if a list has repeated elements
+% +List
 has_repeated_elements(List) :-
     member(Element, List),
     select(Element, List, Rest),
@@ -16,11 +12,14 @@ has_repeated_elements(List) :-
 
 %/----------------------------------------/
 
+%Predicate that checks if a number is even
+% +X -> Number
 isEven(X) :-
     mod(X,2) =:= 0.
 
 %/----------------------------------------/
 
+% Predicates that get the value from the coordinates in a 2 by 2 matrix
 get_board_value_row([Value|_],0,Value).
 
 get_board_value_row([_|Tail],Column,Value) :-
@@ -38,6 +37,7 @@ get_board_value([_|Tail], Row, Column, Value) :-
 
 %/----------------------------------------/
 
+% Predicates that replace the element from the coordinates in a 2 by 2 matrix with a specified value
 replace_board_value_row([_|Tail],0,Value,[Value|Tail]).
 
 replace_board_value_row([Head|Tail],Column,Value,[Head|NewTail]) :-
@@ -59,6 +59,7 @@ replace_board_value([Head|Tail],Row,Column,Value,[Head|NewTail]) :-
 
 %/----------------------------------------/
 
+% Predicates that translate a string or a char to an integer
 string_to_int(String, Int) :-
     string_chars(String, Chars),
     maplist(char_to_int, Chars, Ints),
@@ -70,7 +71,9 @@ char_to_int(Char, Int) :-
 
 +(_, Acc, Acc).
 
+%/----------------------------------------/
 
+% Predicate that clears the console
 clear_console :-
     write('\e[2J'),
     statistics(walltime, [T1|_]),
@@ -82,10 +85,17 @@ clear_console :-
 
 %/----------------------------------------/
 
+% Predicate that gets the pair of coordinates from a piece predicate
 piece_to_pair(piece(_, X, Y), [X, Y]).
 
 %/----------------------------------------/
 
+% Predicates that sort a list using the quicksort algorithm. Depending on the player,
+% the list will be sorted in ascending order (player 1) or descending order (player 2) of
+% the Y coordinates, in order to determine the best possible pieces (the closest ones to the enemy side)
+% +Player
+% +Coordinates
+% -Sorted -> Sorted list of the coordinates
 quicksort_pieces(_,[], []).
 quicksort_pieces(1,[Head|Tail], Sorted) :-
     split_pieces(1,Head, Tail, Smaller, Larger),
@@ -99,6 +109,15 @@ quicksort_pieces(2,[Head|Tail], Sorted) :-
     quicksort_pieces(2,Smaller, SortedSmaller),
     append(SortedLarger, [Head|SortedSmaller], Sorted).
 
+%/----------------------------------------/
+
+% Auxiliary predicate used in the quick sort algorithm to split the list
+% according to the player (ascending or descending order)
+% +Player
+% +Pivot
+% +Coordinates
+% -LeftCoordinates
+% -RightCoordinates
 split_pieces(_,_, [], [], []).
 split_pieces(1,Pivot, [Head|Tail], [Head|Smaller], Larger) :-
     piece_to_pair(Head, Pair),
