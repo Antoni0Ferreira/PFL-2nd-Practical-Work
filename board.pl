@@ -52,7 +52,7 @@ translate_letter('q',Num) :- Num=17.
 
 % Predicate that gets the initial board of the game
 % -Board
-empty_board([
+initial_state([
 [' ',' ',' ',' ',' ','_','_','_','_','_','_','_','_','_',' ',' ',' ',' ',' '],
 [' ',' ',' ',' ','|','o','|','o','|','o','|','o','|','o','|',' ',' ',' ',' '],
 [' ',' ',' ','|','_','|','o','|','o','|','o','|','o','|','_','|',' ',' ',' '],
@@ -84,11 +84,11 @@ display_board_matrix([Head|Tail],N) :-
     nl,
     display_board_matrix(Tail, N1).
 
-display_game(X) :-
+display_game(GameState) :-
     nl,
     write('   ABCDEFGHIJKLMNOPQ'),
     nl,
-    display_board_matrix(X,0),
+    display_board_matrix(GameState,0),
     nl,
     write('   ABCDEFGHIJKLMNOPQ'),
     nl,nl.

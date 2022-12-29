@@ -225,24 +225,35 @@ check_reached_other_side(Player) :-
 
 %/----------------------------------------/
 
+% Predicate that checks how many pieces a Player has 
+% +Player
+% +Value
+value(Player,Value) :-
+    list_pieces(Player,L),
+    length(L,Value).
+
+%/----------------------------------------/
+
 % Predicates that checks if the enemy doesn't have any pieces left
 % +Player
 check_other_player_number_pieces(Player) :-
     \+isEven(Player),
     OtherPlayer is Player + 1,
-    \+findall(OtherPlayer,piece(OtherPlayer,_,_),[_|_]).
+    value(OtherPlayer,Value),
+    Value =:= 0. 
 
 check_other_player_number_pieces(Player) :-
     isEven(Player),
     OtherPlayer is Player - 1,
-    \+findall(OtherPlayer,piece(OtherPlayer,_,_),[_|_]).
+    value(OtherPlayer,Value),
+    Value =:= 0. 
 
 %/----------------------------------------/
 
 % Predicate that determines the number of pieces the player can move,
 % according to the number of pieces they have left
 % +Player
-% ?N -> Number of iterations
+% -N -> Number of iterations
 get_number_plays(Player,N) :-
     findall(_,piece(Player,_,_),List),
     length(List,N1),
@@ -272,7 +283,7 @@ get_number_plays(Player,N) :-
 % ?N -> Number of iterations
 choose_pieces_rec(Gamestate,Player,Pieces,ChosenPieces,N) :-
     N > 0,
-    format('\n#~d Which piece do you want to move forward? ([A-Q][1-9])\n',[4-N]),read(Cords),
+    format('\n#~d Which piece do you want to move forward? ("[A-Q][1-9])".\n',[4-N]),read(Cords),
     check_cords(Cords,Player,X,Y),
     N1 is N - 1,
 

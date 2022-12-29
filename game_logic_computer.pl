@@ -1,6 +1,7 @@
 :- consult('game_logic.pl').
 
 %/----------------------------------------/
+
 % Predicates that, given a set of coordinates, determine
 % the possible set of moves and update the database with the predicates next_piece(X,Y,Weight). It takes in
 % consideration the player and the restrictions imposed.

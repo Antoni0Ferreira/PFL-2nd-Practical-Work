@@ -11,7 +11,8 @@ valid_play_menu_choice(4).
 
 % Predicate that displays simple rules of the game
 display_rules :-
-    write('\nTaacoca is a two-player strategy game played on a grid. Each player takes turns placing their pieces on the grid, trying to get three in a row horizontally, vertically, or diagonally. The first player to get three in a row wins the game.'), nl.
+    clear_console,
+    write('\nTaacoca is a two-player abstract board game played on a hexagonal board with five cells per side.\n\nThe objective of Taacoca game is to reach the opponents Home row with one of the players pieces.\n\nA player also wins a game if the opponent is left without any pieces..\n\nStarting with player 1, players take turns moving any three of their pieces one cell forward. If a player has less than three pieces he must move all the remaning pieces, if thats not possible, he loses the game. The chosen pieces do not need to be connected to each other but they must move in the same direction.\nA player cannot move his pieces if one of the target cells is occupied with another piece of the player. If some of the target cells, or all of them, are occupied with opponents pieces then the opponents pieces are captured and removed from the board.'), nl.
 
 %/----------------------------------------/
 

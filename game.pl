@@ -79,8 +79,8 @@ check_valid_spaces(_,_,[],0).
 %/----------------------------------------/
 
 % Predicate that checks if the movement of the pieces results in any attacks
-% Player
-% +[[X,Y]|Tail] -> List of the new coordinates of the chosen pieces
+% +Player
+% +Coordinates -> List of the new coordinates of the chosen pieces
 % ?N -> Number of iterations
 check_attacks(Player,[[X,Y]|Tail],N) :-
 
@@ -132,7 +132,7 @@ prepare_move(Gamestate,[],Gamestate,0).
 % +Gamestate -> Current board
 % +Player
 % +Dir -> Direction
-% +[[X,Y]|Tail] -> List of the coordinates of the new spaces
+% +Coordinates -> List of the coordinates of the new spaces
 % -NewGamestate -> New Board
 % ?N -> Number of iterations
 move_pieces(Gamestate,Player,[[X,Y]|Tail],NewGamestate,N) :-
@@ -215,7 +215,7 @@ get_new_spaces(_,[],_,Pieces,Pieces,0).
 % chosen pieces, in the AI vs AI mode.
 % +Gamestate -> Current board
 % +Player
-% +[[X,Y]|Tail] -> List of the coordinates of the chosen pieces 
+% +Coordinates -> List of the coordinates of the chosen pieces 
 % ?Acc -> Accumulator of all the valid moves
 % -AllValidMoves -> List with all valid possibe next moves, for each chosen piece
 % ?N -> Number of iterations
@@ -235,7 +235,7 @@ get_valid_moves(_,_,[],ValidMoves,ValidMoves,0).
 % bigger/equal than the weight of the right pieces. So, the left pieces are chosen.
 % +Gamestate -> Current board
 % +Player
-% +[Head|Tail] -> List of possible next pieces
+% +PossiblePieces -> List of possible next pieces
 % -NewPieces -> List of chosen next pieces
 % ?N -> Number of iterations
 find_next_pieces(Gamestate,Player,[Head|Tail],NewPieces,N) :-
@@ -285,6 +285,7 @@ game(Gamestate,N,FinalGamestate) :-
     isEven(N),
     \+game_over(1),
     \+game_over(2),
+    nl,nl,listing(piece),nl,nl,
     display_game(Gamestate),
     move(Gamestate,2,NewGamestate),
     N1 is N + 1,
@@ -298,8 +299,10 @@ game(Gamestate,N,FinalGamestate) :-
     \+isEven(N),
     \+game_over(1),
     \+game_over(2),
+    nl,nl,listing(piece),nl,nl,
     display_game(Gamestate),
     move(Gamestate,1,NewGamestate),
+    nl,nl,listing(piece),nl,nl,
     N1 is N + 1,
     game(NewGamestate,N1,FinalGamestate).
 
@@ -450,7 +453,7 @@ game_two_computers(Gamestate,Level,FinalGamestate) :-
 game_pvp :-
     write('\n=========================================================\n'),
 
-    empty_board(InitialGamestate),
+    initial_state(InitialGamestate),
     game(InitialGamestate,1,FinalGamestate),
     display_game(FinalGamestate),
 
@@ -462,7 +465,7 @@ game_pvp :-
 game_pvai(Level,Player) :-
     write('\n=========================================================\n'),
 
-    empty_board(InitialGamestate),
+    initial_state(InitialGamestate),
     game_one_computer(InitialGamestate,Player,Level,FinalGamestate),
     display_game(FinalGamestate),
 
@@ -473,7 +476,7 @@ game_pvai(Level,Player) :-
 game_aivai(Level) :-
     write('\n=========================================================\n'),
 
-    empty_board(InitialGamestate),
+    initial_state(InitialGamestate),
     game_two_computers(InitialGamestate, Level, FinalGamestate),
     display_game(FinalGamestate),
 
