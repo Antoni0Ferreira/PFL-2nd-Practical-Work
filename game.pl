@@ -285,7 +285,6 @@ game(Gamestate,N,FinalGamestate) :-
     isEven(N),
     \+game_over(1),
     \+game_over(2),
-    nl,nl,listing(piece),nl,nl,
     display_game(Gamestate),
     move(Gamestate,2,NewGamestate),
     N1 is N + 1,
@@ -299,10 +298,8 @@ game(Gamestate,N,FinalGamestate) :-
     \+isEven(N),
     \+game_over(1),
     \+game_over(2),
-    nl,nl,listing(piece),nl,nl,
     display_game(Gamestate),
     move(Gamestate,1,NewGamestate),
-    nl,nl,listing(piece),nl,nl,
     N1 is N + 1,
     game(NewGamestate,N1,FinalGamestate).
 

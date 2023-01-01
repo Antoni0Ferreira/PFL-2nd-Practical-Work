@@ -1,7 +1,9 @@
 # 2º Trabalho Prático de PFL 
 ## Taacoca - Grupo 2 (3LEIC06)
+
 - up202004735 - António Ferreira (50%)
 - up202006137 - Guilherme Almeida (50%)
+
 ---
 ## Installation and Execution
 
@@ -12,6 +14,8 @@ To play **Taacoca**, alongside the folder with the source code of the game, you 
 Finally, to start the game, you'll have to run the predicate **play/0**, which will boot up the main menu of Taacoca:
 
     ?- play.
+
+
 ---
 ## Game Description
 
@@ -22,42 +26,59 @@ One of the characteristics of Taacoca that distinguishes itself from other board
 Initially, each player has 12 pieces. Here's a representation of initial state of the board:
 
 
-![Board](./images/board.png)
+![Board](https://i.postimg.cc/DwffWJj7/board.png)
 
 ### Gameplay
 Starting with player 1, players will take turns moving any three of their pieces one space forward (if a player has less than three pieces, then they must move all of the remaning pieces, if that's not possible, they lose the game). 
 
 The chosen pieces **do not need to be connected to each other** but they **must move in the same direction** (left or right). A player cannot move their pieces to a space/cell if it is **occupied with another piece of theirs.** If some of the target spaces/cells (or all of them) are occupied with enemy's pieces then the opponent's pieces in question are **captured and removed from the board.**
 
-The first player to *reach the home row of the opponent* or *capture all of their pieces* wins. **No draws are possible in Taacoca.**
+The first player to **reach the home row of the opponent** or **capture all of their pieces** wins. **No draws are possible in Taacoca.**
 
+---
 
 ## Game Logic
+
 ### Game state internal representation
 
 The **game state** is made up of the game board and the pieces of each player.
 
-- On one hand, the **board** is represented by a **list of lists**: each list is a row on the board and each element of these lists represents a space/cell of the board. A **space** can be an *empty space ('_')*, a *piece of player 1 ('+')* or a *piece of player 2 ('o')*.
+- On one hand, the **board** is represented by a **list of lists**: each list is a row on the board and each element of these lists represents a space/cell of the board. A **space** can be an **empty space ('_')**, a **piece of player 1 ('+')** or a **piece of player 2 ('o')**.
 
 - On the other hand, the **pieces** of each player are handled using the predicate *piece/3*. This predicate will store information about which player it belongs to and its current X and Y coordinates. 
 
-- There's also many other predicates that are used to ensure the rules and logic of the game: *valid_spaces/2* (used to check if a piece can move to a certain cell or not), *valid_direction/1* (used to check if the user inputed a valid direction) and *next_piece/3* (used in the hard difficulty game modes, where the next X and Y coordinates of a space are stored, as well as the weight of that next move: **3 - only space available // 2 - enemy piece // 1 - empty space // 0 - not valid** ).
+- There's also many other predicates that are used to ensure the rules and logic of the game: **valid_spaces/2** (used to check if a piece can move to a certain cell or not), **valid_direction/1** (used to check if the user inputed a valid direction) and **next_piece/3** (used in the hard difficulty game modes, where the next X and Y coordinates of a space are stored, as well as the weight of that next move: **3 - only space available // 2 - enemy piece // 1 - empty space // 0 - not valid** ).
 
 #### Initial state
 
-![Initial State_1 #1](./images/state_1_1.png) ![Initial State_1 #2](./images/state_1_2.png)
+Board
 
+![Initial State_1 #2](https://i.postimg.cc/prtRPp5b/state-1-2.png)
+
+Pieces left
+
+![Initial State_1 #1](https://i.postimg.cc/mrJT6dbr/state-1-1.png) 
 
 #### Intermediate state
 
-![Initial State_2 #1](./images/state_2_1.png) ![Initial State_2 #2](./images/state_2_2.png)
+Board
 
+![Initial State_2 #2](https://i.postimg.cc/26WCp467/state-2-2.png)
+
+Pieces left
+
+![Initial State_2 #1](https://i.postimg.cc/RhQ9h4w3/state-2-1.png)
 
 #### Final state
 
-![Initial State_3 #1](./images/state_3_1.png) ![Initial State_3 #2](./images/state_3_2.png)
+Board
 
----
+![Initial State_3 #2](https://i.postimg.cc/05p9cdh8/state-3-2.png)
+
+Pieces left
+
+![Initial State_3 #1](https://i.postimg.cc/FK79ptXq/state-3-1.png) 
+
 ### Game state visualization
 
 The visual and interaction aspects of the game are focused on two main modules: the `play` module and the `board` module.
@@ -69,7 +90,7 @@ This module is responsible for handling all of the aspects regarding the menus o
 `main_menu` 
 - Predicate responsible for printing out the main menu of the game
 
-![menu](./images/menu.png)
+![menu](https://i.postimg.cc/BnhS2SkH/menu.png)
 
 `menu_choice(+Choice)`
 - Predicate responsible for handling the choice given by the user
@@ -77,7 +98,7 @@ This module is responsible for handling all of the aspects regarding the menus o
 `play_menu`
 - Predicate responsible for printing out the play menu of the game (where the user can select which game mode they want to play)
 
-![menu2](./images/menu_2.png)
+![menu2](https://i.postimg.cc/MKmKKbYs/menu-2.png)
 
 `play_menu_choice(+Choice)`
 - Predicate responsible for handling the choice given by the user. If necessary, depending on the game mode, the user will be asked to choose the level of difficulty and what player he wants to play as.
@@ -103,7 +124,7 @@ Although they are included in other modules, there are other predicates that are
 
 `choose_pieces_rec(+Gamestate,+Player,?Pieces,-ChosenPieces,?N)`
 - Recursive predicate where the user will chose which pieces they want to move
----
+
 ### Move execution
 
 During a user's turn, the process of executing a move is handled by the **move/3** predicate. In this, will be initially asked in which direction he wants to move the pieces (left or right).
@@ -125,8 +146,6 @@ The actual movement of the pieces occurs in the **move_pieces/5** predicate:
 Finally, to finish the turn, attacks (an enemy's piece is consumed during the move of one of the user's pieces) will be checked using the **check_attacks/2** predicate:
 
 `check_attacks(+Player,+Coordinates,?N)`
-
----
     
 ### Game Over
 
@@ -144,7 +163,6 @@ For the second rule we defined the predicate **check_other_player_number_pieces/
 
 Finally, the **game_over/1** predicate uses these two rules to determine if the game has ended by checking both conditions. If either of the two rules succeeds, then the game is over.
 
-
 ### List of valid moves:
 
 The first step for the creation of the bot was to create the predicate **valid_moves/4**:
@@ -161,11 +179,11 @@ We also have the **get_valid_moves/6** predicate, which is used to find the vali
 
 Once the **valid_moves/4** predicate has determined the possible moves and assigned weights to each position, the **get_valid_moves/6** predicate adds these moves to the accumulator (Acc) and continues to the next piece in the list. When all the chosen pieces have been processed, the ** gget_valid_moves/6** predicate returns the list of all valid possible
 
-
 ### Game state evaluation
 
 The strategy we decided to use for our game, since it has a continous flow and 2 defined ways of winning was to use the **value/2** predicate to check the amount of pieces of a certain player.
 
+`value(Player,Value)`
 
 ### Computer move
 
@@ -188,6 +206,8 @@ This predicate uses *move_pieces/5* and it repeats this process until N pieces t
     `get_valid_moves(+Gamestate,+Player,+Coordinates,?Acc,-AllValidMoves,?N)`
     - To determine in which direction to move the pieces, in the **find_next_pieces/5** predicate, the sum of the weights of each direction will be calculated. If the weight of the next left pieces is bigger or equal to the total weight of the right next pieces, the pieces will move to the left. Otherwise, they will move to the right. 
     `find_next_pieces(+Gamestate,+Player,+PossiblePieces,-NewPieces,?N)`
+
+---
 
 ## Conclusion
 
