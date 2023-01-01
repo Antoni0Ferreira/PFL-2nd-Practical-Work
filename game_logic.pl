@@ -77,7 +77,7 @@ get_direction(Dir) :-
 
 % Predicate that checks in the database if a piece with the
 % specific coordinates exists
-% +[XInput,YInput] -> Coordinates from input 
+% +Coordinates -> Coordinates from input 
 % +Player
 % -X
 % -Y
@@ -91,7 +91,7 @@ check_existence([XInput,YInput],Player,X,Y) :-
 %/----------------------------------------/
 
 % Predicates thats checks if the coordenates given are valid
-% +[XInput,YInput] -> Coordinates from input 
+% +Coordinates -> Coordinates from input 
 % +Player
 % -X
 % -Y
@@ -114,7 +114,7 @@ check_cords([XInput,YInput],Player,X,Y) :-
 % Predicates thats checks if the coordinates given represent a valid space
 % +Board -> Current Board
 % +Player
-% +[X,Y] -> Coordinates
+% +Coordinates -> Coordinates
 check_valid_space(Board,1,[X,Y]) :-
     get_board_value(Board,Y,X,Value),
     valid_spaces('+',Value).
@@ -127,7 +127,7 @@ check_valid_space(Board,2,[X,Y]) :-
 
 % Predicates thats checks if an attack happens at the specified coordinates and updates the database
 % +Player
-% +[X,Y] -> Coordinates
+% +Coordinates -> Coordinates
 check_attack(1,[X,Y]) :-
     piece(2,X,Y),
     retract(piece(2,X,Y)).
@@ -147,7 +147,7 @@ check_attack(2,[X,Y]) :-
 % Predicate thats moves the chosen piece to the new space and updates the database
 % +Board -> Current Board
 % +Player
-% +[X,Y] -> Coordinates of the chosen piece
+% +Coordinates -> Coordinates of the chosen piece
 % -NewBoard -> New Board
 move_piece(Board,1,[X,Y],NewBoard) :-
     replace_board_value(Board,Y,X,'+',NewBoard),
@@ -161,7 +161,7 @@ move_piece(Board,2,[X,Y],NewBoard) :-
 
 % Predicate that cleans a space of the board and removes the piece from the database
 % +Board -> Current Board
-% +[X,Y] -> Coordinates of the space
+% +Coordinates -> Coordinates of the space
 % -NewBoard -> New Board
 clean_space(Board,Player,[X,Y],NewBoard) :-
     replace_board_value(Board,Y,X,'_',NewBoard),
@@ -171,7 +171,7 @@ clean_space(Board,Player,[X,Y],NewBoard) :-
 
 % Predicate that wipes a space of the board
 % +Board -> Current Board
-% +[X,Y] -> Coordinates of the space
+% Coordinates -> Coordinates of the space
 % -NewBoard -> New Board
 prepare_space(Board,[X,Y],NewBoard) :-
     replace_board_value(Board,Y,X,'_',NewBoard).
@@ -179,6 +179,10 @@ prepare_space(Board,[X,Y],NewBoard) :-
 %/----------------------------------------/
 
 % Predicates that get the coordinates of the new spaces where the pieces will move
+% +Player
+% +Coordinates -> Initial Coordinates
+% +Dir -> Direction
+% -NewCoordinates
 get_new_space(1,[X,Y],'l',[X1,Y1]) :-
     X1 is X - 1,
     X1 >= 0,

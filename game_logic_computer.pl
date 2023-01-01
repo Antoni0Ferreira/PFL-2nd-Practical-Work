@@ -11,7 +11,7 @@
 % which is invalid, will receive the weight of 0.
 % +Board -> Current Board
 % +Player
-% +[X,Y] -> Coordinates
+% +Coordinates -> Coordinates
 % -PossiblePieces -> List of the coordinates of possible moves/next pieces
 valid_moves(Board,1,[X,Y],[[X11,Y1],[X12,Y1]]) :-
     X11 is (X - 1),

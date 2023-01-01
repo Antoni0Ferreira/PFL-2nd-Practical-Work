@@ -65,7 +65,7 @@ choose_move(Gamestate,Player,2,NewGamestate) :-
 % Predicate that checks if the moves are all valid
 % +Gamestate -> Current board
 % Player
-% +[[X,Y]|Tail] -> List of the new coordinates of the chosen pieces
+% +NewCoordinates -> List of the new coordinates of the chosen pieces
 % ?N -> Number of iterations
 check_valid_spaces(Gamestate,Player,[Head|Tail],N) :-
 
@@ -97,7 +97,7 @@ check_attacks(_,_,0).
 % the movement of the pieces
 % +Gamestate -> Current board
 % Player
-% +[[X,Y]|Tail] -> List of the coordinates of the chosen pieces
+% +Coordinates -> List of the coordinates of the chosen pieces
 % -NewGamestate -> New Board
 % ?N -> Number of iterations
 clean_game(Gamestate,Player,[[X,Y]|Tail],NewGamestate,N) :-
@@ -114,7 +114,7 @@ clean_game(Gamestate,_,[],Gamestate,0).
 % Predicate where the selected spaces will be emptied to facilitate
 % the validation of the moves
 % +Gamestate -> Current board
-% +[[X,Y]|Tail] -> List of the coordinates of the chosen pieces
+% +Coordinates -> List of the coordinates of the chosen pieces
 % -NewGamestate -> New Board
 % ?N -> Number of iterations  
 prepare_move(Gamestate,[[X,Y]|Tail],NewGamestate,N) :-
@@ -195,7 +195,7 @@ choose_pieces_computer(Gamestate,Player,Dir,Pieces,NewPieces,NewGamestate,N) :-
 % Predicate that obtains the coordinates of the next spaces
 % to where the pieces will move, according to the direction chosen
 % +Player
-% +[[X,Y]|Tail] -> List of the coordinates of the chosen pieces 
+% +Coordinates -> List of the coordinates of the chosen pieces 
 % +Dir -> Direction
 % ?Acc -> Accumulator
 % -NewPieces -> List of the new coordinates
@@ -251,7 +251,7 @@ find_next_pieces(Gamestate,Player,[Head|Tail],NewPieces,N) :-
 % bigger than the weight of the left pieces. So, the right pieces are chosen.
 % +Gamestate -> Current board
 % +Player
-% +[Head|Tail] -> list of possible next pieces
+% +Pieces -> list of possible next pieces
 % -NewPieces -> list of chosen next pieces
 % ?N -> Number of iterations
 find_next_pieces(Gamestate,Player,[Head|Tail],NewPieces,N) :-
