@@ -37,12 +37,13 @@ start_pvai(Level,Player) :-
 %/----------------------------------------/
 
 % Predicate that starts the AI vs AI game mode
-% +Level -> level of difficulty
-start_aivai(Level) :-
+% +Level1 -> level of difficulty of AI #1
+% +Level2 -> level of difficulty of AI #2
+start_aivai(Level1,Level2) :-
     write('\nStarting AI vs. AI game...\n'),
 
     clear_console,
-    game_aivai(Level),!.
+    game_aivai(Level1,Level2),!.
 
 %/----------------------------------------/
 
@@ -83,12 +84,19 @@ play_menu_choice(2) :-
 
 % Predicate where the player chooses the AI difficulty and that lets the AI vs AI mode begin
 play_menu_choice(3) :-
-    write('\nWhat level of difficulty do you want to play in?\n'),
+    write('\nWhat level of difficulty should AI #1 play in?\n'),
     write('1 - Easy // 2 - Hard\n'),
 
-    get_char(LevelChar),
-    char_to_int(LevelChar,Level),
-    start_aivai(Level).
+    get_char(LevelChar1),
+    char_to_int(LevelChar1,Level1),skip_line,
+
+    write('\nWhat level of difficulty should AI #2 play in?\n'),
+    write('1 - Easy // 2 - Hard\n'),
+
+    get_char(LevelChar2),
+    char_to_int(LevelChar2,Level2),skip_line,
+
+    start_aivai(Level1,Level2).
 
 %/----------------------------------------/
 

@@ -399,7 +399,7 @@ game_one_computer(Gamestate,2,Level,FinalGamestate) :-
 %/----------------------------------------/
 
 % Predicate that indicates that the game can end, since, after their move, player 1 won
-next_move_two_computers(FinalGamestate,_,FinalGamestate) :-
+next_move_two_computers(FinalGamestate,_,_,FinalGamestate) :-
     game_over(1),
 
     write('\nCongrats, Computer #1 won!\n').
@@ -407,24 +407,25 @@ next_move_two_computers(FinalGamestate,_,FinalGamestate) :-
 % Predicate that lets the second player move, since player 1 didn't win
 % after their move
 % +Gamestate -> Current board
-% +Level -> level of difficulty
+% +Level1 -> level of difficulty of AI #1
+% +Level2 -> level of difficulty of AI #2
 % -FinalGamestate -> final state of the board
-next_move_two_computers(Gamestate,Level,FinalGamestate) :-
+next_move_two_computers(Gamestate,Level1,Level2,FinalGamestate) :-
     \+game_over(1),
     display_game(Gamestate),
-    choose_move(Gamestate,2,Level,NewGamestate),
-    game_two_computers(NewGamestate,Level,FinalGamestate).
+    choose_move(Gamestate,2,Level2,NewGamestate),
+    game_two_computers(NewGamestate,Level1,Level2,FinalGamestate).
 
 %/----------------------------------------/
 
 % Predicate that indicates that player 1 won
-game_two_computers(FinalGamestate,_,FinalGamestate) :-
+game_two_computers(FinalGamestate,_,_,FinalGamestate) :-
     game_over(1),
 
     write('\nCongrats, Computer #1 won!\n').
 
 % Predicate that indicates that player 2 won
-game_two_computers(FinalGamestate,_,FinalGamestate) :-
+game_two_computers(FinalGamestate,_,_,FinalGamestate) :-
     game_over(2),
 
     write('\nCongrats, Computer #2 won!\n').
@@ -432,14 +433,15 @@ game_two_computers(FinalGamestate,_,FinalGamestate) :-
 % Predicate of the AI vs AI game mode loop, where player 1 plays their move and
 % the game checks if they won or not
 % +Gamestate -> Current board
-% +Level -> level of difficulty
+% +Level1 -> level of difficulty of AI #1
+% +Level2 -> level of difficulty of AI #2
 % -FinalGamestate -> final state of the board
-game_two_computers(Gamestate,Level,FinalGamestate) :-
+game_two_computers(Gamestate,Level1,Level2,FinalGamestate) :-
     \+game_over(1),
     \+game_over(2),
     display_game(Gamestate),
-    choose_move(Gamestate,1,Level,NewGamestate),
-    next_move_two_computers(NewGamestate,Level,FinalGamestate).
+    choose_move(Gamestate,1,Level1,NewGamestate),
+    next_move_two_computers(NewGamestate,Level1,Level2,FinalGamestate).
 
 %/----------------------------------------/
 
@@ -469,12 +471,13 @@ game_pvai(Level,Player) :-
     write('\n=========================================================\n').
 
 % AI vs AI game mode
-% +Level -> level of difficulty
-game_aivai(Level) :-
+% +Level1 -> level of difficulty of AI #1
+% +Level2 -> level of difficulty of AI #2
+game_aivai(Level1,Level2) :-
     write('\n=========================================================\n'),
 
     initial_state(InitialGamestate),
-    game_two_computers(InitialGamestate, Level, FinalGamestate),
+    game_two_computers(InitialGamestate, Level1, Level2, FinalGamestate),
     display_game(FinalGamestate),
 
     write('\n=========================================================\n').
