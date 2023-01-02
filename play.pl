@@ -9,6 +9,12 @@ valid_play_menu_choice(2).
 valid_play_menu_choice(3).
 valid_play_menu_choice(4).
 
+valid_level(1).
+valid_level(2).
+
+valid_player(1).
+valid_player(2).
+
 % Predicate that displays simple rules of the game
 display_rules :-
     clear_console,
@@ -31,7 +37,7 @@ start_pvp :-
 start_pvai(Level,Player) :-
     write('\nStarting player vs. AI game...\n'),
 
-    clear_console,skip_line,
+    clear_console,
     game_pvai(Level,Player),!.
 
 %/----------------------------------------/
@@ -68,22 +74,29 @@ play_menu_choice(1) :-
 % Predicate where the player chooses the AI difficulty and which player they want to be, and that lets
 % the player vs AI mode begin
 play_menu_choice(2) :-
+    repeat,
     write('\nWhat level of difficulty do you want to play in?\n'),
     write('1 - Easy // 2 - Hard\n'),
 
     get_char(LevelChar),
     char_to_int(LevelChar,Level),skip_line,
+    valid_level(Level),
 
+    repeat,
     write('\nWhich player do you want to be?\n'),
     write('1 - Player 1 // 2 - Player 2\n'),
 
     get_char(PlayerChar),
-    char_to_int(PlayerChar,Player),
+    char_to_int(PlayerChar,Player),skip_line,
+
+    
+    valid_player(Player),
 
     start_pvai(Level,Player).
 
 % Predicate where the player chooses the AI difficulty and that lets the AI vs AI mode begin
 play_menu_choice(3) :-
+    repeat,
     write('\nWhat level of difficulty should AI #1 play in?\n'),
     write('1 - Easy // 2 - Hard\n'),
 
@@ -95,6 +108,9 @@ play_menu_choice(3) :-
 
     get_char(LevelChar2),
     char_to_int(LevelChar2,Level2),skip_line,
+
+    valid_level(Level1),
+    valid_level(Level2),
 
     start_aivai(Level1,Level2).
 

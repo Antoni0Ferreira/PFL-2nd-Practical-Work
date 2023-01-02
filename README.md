@@ -35,6 +35,13 @@ The chosen pieces **do not need to be connected to each other** but they **must 
 
 The first player to **reach the home row of the opponent** or **capture all of their pieces** wins. **No draws are possible in Taacoca.**
 
+There's 3 different game modes available:
+- Player vs Player
+- Player vs AI
+- AI vs AI
+
+It should also be noted that, one on hand, when the player chooses to play against the AI, they can choose **what side of the board they want to be in** and the **level of difficulty of the computer (easy or hard)**. On the other hand, when the player chooses the AI vs AI mode, they can select the **difficulty of each computer**, allowing for more interesting gameplays.
+
 ---
 
 ## Game Logic
